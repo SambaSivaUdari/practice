@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="08c2fee2-6d5c-460e-9864-d81ffe5e5304" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="demo-samFlow" doc:id="36f6f8ba-8459-4ec9-bebb-49842e46ea94" >
+		<http:listener doc:name="Listener" doc:id="499e4632-b43d-4095-bfc0-ce7c82c89f04" config-ref="HTTP_Listener_config" path="/datadog"/>
+		<ee:transform doc:name="Transform Message" doc:id="3c2d1408-eea0-44ad-a46e-579fff44c73b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "id": "20211020105843",
+    "start_date_time": "2021-10-20T10:58:41Z",
+    "stop_date_time": "2021-10-20T11:48:41Z",
+    "auth_id": "RFID00808413F30093",
+    "auth_method": "AUTH_REQUEST",
+    "location": {
+        "id": "northwark-217northwarkparkroad",
+        "type": "ON_STREET",
+        "name": "London/Northwark/217 Northwark Park Road",
+        "address": "217 Northwark Park Road",
+        "city": "Northwark",
+        "postal_code": "SE78 5RQ",
+        "country": "GBR",
+        "coordinates": {
+            "latitude": "62.781456",
+            "longitude": "-0.035643"
+        },
+        "evses": [
+            {
+                "uid": "northwark-217northwarkparkroad-3-1",
+                "evse_id": "GB*OBC*E007869",
+                "status": "UNKNOWN",
+                "capabilities": [
+                    "RFID_READER",
+                    "REMOTE_START_STOP_CAPABLE"
+                ],
+                "connectors": [
+                    {
+                        "id": "1",
+                        "standard": "IEC_62196_T2",
+                        "format": "SOCKET",
+                        "power_type": "AC_1_PHASE",
+                        "voltage": 230,
+                        "amperage": 32,
+                        "last_updated": "2021-10-20T11:48:41Z"
+                    }
+                ],
+                "last_updated": "2021-10-20T11:48:41Z"
+            }
+        ],
+        "opening_times": {
+            "twentyfourseven": true
+        },
+        "last_updated": "2021-10-20T11:48:41Z"
+    },
+    "currency": "EUR",
+    "charging_periods": [
+        {
+            "start_date_time": "2021-10-20T10:58:41Z",
+            "dimensions": [
+                {
+                    "type": "ENERGY",
+                    "volume": 1.232
+                }
+            ]
+        }
+    ],
+    "total_cost": 3.1464,
+    "total_energy": 1.232,
+    "total_time": 0.1644,
+    "total_parking_time": 1.75,
+    "last_updated": "2021-10-20T11:48:41Z"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="51621581-cddb-41b8-b3bc-301f57a2b4a3" message="#[payload]"/>
+	</flow>
+</mule>
